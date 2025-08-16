@@ -155,21 +155,20 @@
     <div class="container">
         <div class="card" role="main">
             <header>
-                <h1>VONet Share</h1>
-                <p class="sub">Scan the QR. Open or share the link.</p>
+                <h1>Vegas Open Network (VONet)</h1>
+                <p class="sub">Share with others, scan the QR Code.</p>
             </header>
 
             <div class="stack">
                 <div class="qr-shell"><div id="qrcode" aria-label="QR for this page"></div></div>
 
                 <div class="actions">
-                    <a id="openDoc" class="btn btn--primary" href="document.pdf" target="_blank" rel="noopener">Open PDF</a>
-                    <button id="copyLink" class="btn btn--ghost" type="button">Copy page link</button>
+                    <a id="openDoc" class="btn btn--primary" href="VONet Nonprofit Business Plan.pdf" target="_blank" rel="noopener">Open Information PDF</a>
                 </div>
 
                 <nav class="links">
-                    <a class="chip" href="https://vonet.org/" target="_blank" rel="noopener">Website</a>
-                    <a class="chip" href="https://wiki.vonet.org/" target="_blank" rel="noopener">Wiki</a>
+                    <a class="chip" href="https://vonet.org/" target="_blank" rel="noopener">VONet Website</a>
+                    <a class="chip" href="https://wiki.vonet.org/" target="_blank" rel="noopener">VONet Wiki</a>
                     <a class="chip" href="mailto:support@vonet.org">support@vonet.org</a>
                 </nav>
             </div>
@@ -188,13 +187,8 @@
         addEventListener('load', drawQR, { once: true });
         addEventListener('resize', ()=> { clearTimeout(window.__qrt); window.__qrt=setTimeout(drawQR, 120); });
 
-        document.getElementById('copyLink').addEventListener('click', async (e)=>{
-          try { await navigator.clipboard.writeText(pageURL); e.currentTarget.textContent = 'Link copied'; setTimeout(()=> e.currentTarget.textContent='Copy page link', 1600); } catch {}
-        });
-        document.getElementById('shareLink').addEventListener('click', async ()=>{
-          if (navigator.share) { try { await navigator.share({ title:'VONet Share', url: pageURL }); } catch {} }
-          else { try { await navigator.clipboard.writeText(pageURL); alert('Link copied. Share it anywhere.'); } catch {} }
-        });
+        
+       
     </script>
 
 
