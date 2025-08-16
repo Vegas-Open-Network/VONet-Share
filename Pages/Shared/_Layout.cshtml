@@ -1,0 +1,204 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Share | VONet</title>
+    <!-- QR code library -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <style>
+        :root {
+            --brand: #0b66ff;
+            --ink: #1a1a1a;
+            --muted: #444;
+            --bg: #ffffff;
+            --radius: 16px;
+            --shadow: 0 6px 18px rgba(0,0,0,.06);
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box
+        }
+
+        html, body {
+            height: 100%
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--ink);
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif;
+            line-height: 1.35;
+            -webkit-font-smoothing: antialiased
+        }
+
+        .container {
+            max-width: 540px;
+            margin: 0 auto;
+            padding: max(16px, env(safe-area-inset-top)) 16px max(24px, env(safe-area-inset-bottom));
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 16px
+        }
+
+        h1 {
+            margin: 0 0 8px;
+            font-size: clamp(20px, 5vw, 26px)
+        }
+
+        .sub {
+            margin: 0;
+            color: var(--muted);
+            font-size: clamp(14px, 3.5vw, 16px)
+        }
+
+        .card {
+            background: #fafafa;
+            border-radius: 20px;
+            padding: clamp(16px,5vw,24px);
+            box-shadow: var(--shadow)
+        }
+
+        .stack {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: clamp(14px,4vw,20px)
+        }
+
+        .qr-shell {
+            width: min(80vw, 300px);
+            aspect-ratio: 1;
+            border-radius: 16px;
+            background: #fff;
+            padding: clamp(10px,2.5vw,14px);
+            box-shadow: var(--shadow)
+        }
+
+            .qr-shell canvas {
+                width: 100% !important;
+                height: 100% !important;
+                display: block
+            }
+
+        .actions {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 6px
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            appearance: none;
+            border: 0;
+            border-radius: 12px;
+            padding: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+            transition: background .15s ease
+        }
+
+        .btn--primary {
+            background: var(--brand);
+            color: #fff
+        }
+
+            .btn--primary:active {
+                background: #004bcc
+            }
+
+        .btn--ghost {
+            background: #fff;
+            color: var(--ink);
+            box-shadow: var(--shadow)
+        }
+
+        .links {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 12px auto 0;
+            width: 100%
+        }
+
+        .chip {
+            display: block;
+            text-align: center;
+            padding: 12px;
+            border-radius: 12px;
+            background: #fff;
+            box-shadow: var(--shadow);
+            color: var(--brand);
+            text-decoration: none
+        }
+
+            .btn:focus-visible, .chip:focus-visible {
+                outline: 3px solid #99c4ff;
+                outline-offset: 3px
+            }
+        
+
+        }
+    </style>
+</head>
+<body>
+    
+
+    <div class="container">
+        <div class="card" role="main">
+            <header>
+                <h1>VONet Share</h1>
+                <p class="sub">Scan the QR. Open or share the link.</p>
+            </header>
+
+            <div class="stack">
+                <div class="qr-shell"><div id="qrcode" aria-label="QR for this page"></div></div>
+
+                <div class="actions">
+                    <a id="openDoc" class="btn btn--primary" href="document.pdf" target="_blank" rel="noopener">Open PDF</a>
+                    <button id="copyLink" class="btn btn--ghost" type="button">Copy page link</button>
+                </div>
+
+                <nav class="links">
+                    <a class="chip" href="https://vonet.org/" target="_blank" rel="noopener">Website</a>
+                    <a class="chip" href="https://wiki.vonet.org/" target="_blank" rel="noopener">Wiki</a>
+                    <a class="chip" href="mailto:support@vonet.org">support@vonet.org</a>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const shell = document.querySelector('.qr-shell');
+        const qrEl = document.getElementById('qrcode');
+        const pageURL = location.href.replace(/#.*$/, '');
+        function drawQR(){
+          const size = Math.floor(shell.clientWidth);
+          qrEl.innerHTML = '';
+          new QRCode(qrEl, { text: pageURL, width: size, height: size, correctLevel: QRCode.CorrectLevel.M });
+        }
+        addEventListener('load', drawQR, { once: true });
+        addEventListener('resize', ()=> { clearTimeout(window.__qrt); window.__qrt=setTimeout(drawQR, 120); });
+
+        document.getElementById('copyLink').addEventListener('click', async (e)=>{
+          try { await navigator.clipboard.writeText(pageURL); e.currentTarget.textContent = 'Link copied'; setTimeout(()=> e.currentTarget.textContent='Copy page link', 1600); } catch {}
+        });
+        document.getElementById('shareLink').addEventListener('click', async ()=>{
+          if (navigator.share) { try { await navigator.share({ title:'VONet Share', url: pageURL }); } catch {} }
+          else { try { await navigator.clipboard.writeText(pageURL); alert('Link copied. Share it anywhere.'); } catch {} }
+        });
+    </script>
+
+
+    @RenderBody()
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
