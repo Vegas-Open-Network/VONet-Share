@@ -98,145 +98,149 @@
     </div>
 
     <script>
-                // --- DOM Element References ---
-                const openShareModalButton = document.getElementById('openShareModalButton');
-                const closeShareModalButton = document.getElementById('closeShareModalButton');
-                const shareModalOverlay = document.getElementById('shareModalOverlay');
-                const shareModalPanel = document.getElementById('shareModalPanel');
-                const qrCodeDisplayElement = document.getElementById('qrCodeDisplay');
-                const copyLinkButton = document.getElementById('copyLinkButton');
-                const saveContactButton = document.getElementById('saveContactButton');
+        // --- DOM Element References ---
+        const openShareModalButton = document.getElementById('openShareModalButton');
+        const closeShareModalButton = document.getElementById('closeShareModalButton');
+        const shareModalOverlay = document.getElementById('shareModalOverlay');
+        const shareModalPanel = document.getElementById('shareModalPanel');
+        const qrCodeDisplayElement = document.getElementById('qrCodeDisplay');
+        const copyLinkButton = document.getElementById('copyLinkButton');
+        const saveContactButton = document.getElementById('saveContactButton');
 
-                // --- State ---
-                let qrCodeObject = null;
+        // --- State ---
+        let qrCodeObject = null;
 
-                // --- Functions ---
+        // --- Functions ---
 
-                /**
-                 * Opens the share modal with a smooth animation.
-                 */
-                function handleOpenShareModal() {
-                    shareModalOverlay.classList.remove('hidden');
-                    // Use a timeout to allow the display property to apply before starting the transition
-                    setTimeout(() => {
-                        shareModalOverlay.classList.remove('opacity-0');
-                        shareModalPanel.classList.remove('scale-95', 'opacity-0');
-                    }, 10);
+        /**
+         * Opens the share modal with a smooth animation.
+         */
+        function handleOpenShareModal() {
+            shareModalOverlay.classList.remove('hidden');
+            setTimeout(() => {
+                shareModalOverlay.classList.remove('opacity-0');
+                shareModalPanel.classList.remove('scale-95', 'opacity-0');
+            }, 10);
 
-                    if (!qrCodeObject) {
-                        qrCodeObject = new QRCode(qrCodeDisplayElement, {
-                            text: window.location.href,
-                            width: 192,
-                            height: 192,
-                            colorDark: "#000000",
-                            colorLight: "#ffffff",
-                            correctLevel: QRCode.CorrectLevel.H
-                        });
-                    }
-                }
-
-                /**
-                 * Closes the share modal with a smooth animation.
-                 */
-                function handleCloseShareModal() {
-                    shareModalOverlay.classList.add('opacity-0');
-                    shareModalPanel.classList.add('scale-95', 'opacity-0');
-                    setTimeout(() => {
-                        shareModalOverlay.classList.add('hidden');
-                    }, 300); // Match the duration of the CSS transition
-                }
-
-                /**
-                 * Copies the current page URL to the clipboard and provides user feedback.
-                 */
-                function handleCopyLink() {
-                    const linkToCopy = window.location.href;
-                    navigator.clipboard.writeText(linkToCopy).then(() => {
-                        copyLinkButton.textContent = 'Copied!';
-                        setTimeout(() => {
-                            copyLinkButton.textContent = 'Copy Link';
-                        }, 2000);
-                    }).catch(err => {
-                        console.error('Clipboard API failed: ', err);
-                        // Fallback for older browsers or insecure contexts
-                        try {
-                            const textarea = document.createElement('textarea');
-                            textarea.value = linkToCopy;
-                            textarea.style.position = 'fixed';
-                            document.body.appendChild(textarea);
-                            textarea.focus();
-                            textarea.select();
-                            document.execCommand('copy');
-                            document.body.removeChild(textarea);
-                            copyLinkButton.textContent = 'Copied!';
-                            setTimeout(() => {
-                                copyLinkButton.textContent = 'Copy Link';
-                            }, 2000);
-                        } catch (fallbackErr) {
-                            console.error('Fallback copy failed: ', fallbackErr);
-                            copyLinkButton.textContent = 'Failed to Copy';
-                            setTimeout(() => {
-                                copyLinkButton.textContent = 'Copy Link';
-                            }, 2000);
-                        }
-                    });
-                }
-
-                /**
-                 * Generates and triggers the download of a VCF (Virtual Contact File).
-                 */
-                function handleSaveContact() {
-                    // Define contact information
-                    const contact = {
-                        name: 'Vegas Open Network',
-                        org: 'VONet',
-                        email: 'support@vonet.org',
-                        url: window.location.href // Use the current page URL
-                    };
-
-                    // Create VCF content string
-                    const vcfContent = `BEGIN:VCARD
-        VERSION:3.0
-        FN:${contact.name}
-        ORG:${contact.org}
-        EMAIL:${contact.email}
-        URL:${contact.url}
-        END:VCARD`;
-
-                    // Create a Blob from the VCF content
-                    const blob = new Blob([vcfContent], { type: 'text/vcard;charset=utf-8' });
-
-                    // Create a temporary link to trigger the download
-                    const link = document.createElement('a');
-                    link.href = URL.createObjectURL(blob);
-                    link.download = 'VONet.vcf';
-
-                    // Append to body, click, and remove
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-
-                    // Provide user feedback
-                    saveContactButton.innerHTML = `
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M20 6 9 17l-5-5"></path></svg>
-                        Saved!`;
-                    setTimeout(() => {
-                        saveContactButton.innerHTML = `
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M19 8v6"></path><path d="M22 11h-6"></path></svg>
-                        Save Contact`;
-                    }, 2500);
-                }
-
-                // --- Event Listeners ---
-                openShareModalButton.addEventListener('click', handleOpenShareModal);
-                closeShareModalButton.addEventListener('click', handleCloseShareModal);
-                shareModalOverlay.addEventListener('click', (event) => {
-                    if (event.target === shareModalOverlay) {
-                        handleCloseShareModal();
-                    }
+            if (!qrCodeObject) {
+                qrCodeObject = new QRCode(qrCodeDisplayElement, {
+                    text: window.location.href,
+                    width: 192,
+                    height: 192,
+                    colorDark: "#000000",
+                    colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.H
                 });
-                copyLinkButton.addEventListener('click', handleCopyLink);
-                saveContactButton.addEventListener('click', handleSaveContact);
+            }
+        }
+
+        /**
+         * Closes the share modal with a smooth animation.
+         */
+        function handleCloseShareModal() {
+            shareModalOverlay.classList.add('opacity-0');
+            shareModalPanel.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                shareModalOverlay.classList.add('hidden');
+            }, 300); // Match the duration of the CSS transition
+        }
+
+        /**
+         * Copies the current page URL to the clipboard and provides user feedback.
+         */
+        function handleCopyLink() {
+            const linkToCopy = window.location.href;
+            navigator.clipboard.writeText(linkToCopy).then(() => {
+                copyLinkButton.textContent = 'Copied!';
+                setTimeout(() => {
+                    copyLinkButton.textContent = 'Copy Link';
+                }, 2000);
+            }).catch(err => {
+                console.error('Clipboard API failed: ', err);
+                try {
+                    const textarea = document.createElement('textarea');
+                    textarea.value = linkToCopy;
+                    textarea.style.position = 'fixed';
+                    document.body.appendChild(textarea);
+                    textarea.focus();
+                    textarea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textarea);
+                    copyLinkButton.textContent = 'Copied!';
+                    setTimeout(() => {
+                        copyLinkButton.textContent = 'Copy Link';
+                    }, 2000);
+                } catch (fallbackErr) {
+                    console.error('Fallback copy failed: ', fallbackErr);
+                    copyLinkButton.textContent = 'Failed to Copy';
+                    setTimeout(() => {
+                        copyLinkButton.textContent = 'Copy Link';
+                    }, 2000);
+                }
+            });
+        }
+
+        /**
+         * Generates and triggers the download of a VCF (Virtual Contact File).
+         * This version is more robust for better compatibility.
+         */
+        function handleSaveContact() {
+            // Define contact information
+            const contact = {
+                name: 'Vegas Open Network',
+                org: 'VONet',
+                phone: '+1-702-555-0187', // Placeholder phone number
+                email: 'support@vonet.org',
+                url: window.location.href
+            };
+
+            // Create VCF content string using CRLF (\r\n) for line endings
+            const vcfContent = [
+                'BEGIN:VCARD',
+                'VERSION:3.0',
+                `N:;${contact.name};;;`, // Structured Name
+                `FN:${contact.name}`,     // Formatted Name
+                `ORG:${contact.org}`,
+                `TEL;TYPE=WORK,VOICE:${contact.phone}`,
+                `EMAIL:${contact.email}`,
+                `URL:${contact.url}`,
+                `NOTE:Contact saved from the VONet Digital Business Card.`,
+                'END:VCARD'
+            ].join('\r\n');
+
+            // Create a Blob from the VCF content
+            const blob = new Blob([vcfContent], { type: 'text/vcard;charset=utf-8' });
+
+            // Create a temporary link to trigger the download
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'VONet.vcf';
+
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            // Provide user feedback
+            saveContactButton.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M20 6 9 17l-5-5"></path></svg>
+                Saved!`;
+            setTimeout(() => {
+                saveContactButton.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M19 8v6"></path><path d="M22 11h-6"></path></svg>
+                Save Contact`;
+            }, 2500);
+        }
+
+        // --- Event Listeners ---
+        openShareModalButton.addEventListener('click', handleOpenShareModal);
+        closeShareModalButton.addEventListener('click', handleCloseShareModal);
+        shareModalOverlay.addEventListener('click', (event) => {
+            if (event.target === shareModalOverlay) {
+                handleCloseShareModal();
+            }
+        });
+        copyLinkButton.addEventListener('click', handleCopyLink);
+        saveContactButton.addEventListener('click', handleSaveContact);
 
     </script>
 
