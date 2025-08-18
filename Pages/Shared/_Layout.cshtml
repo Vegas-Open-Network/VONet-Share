@@ -1,196 +1,244 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <title>Share | VONet</title>
-    <!-- QR code library -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vegas Open Network (VONet) - Digital Card</title>
+
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- QR Code Generation Library -->
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+
     <style>
-        :root {
-            --brand: #0b66ff;
-            --ink: #1a1a1a;
-            --muted: #444;
-            --bg: #ffffff;
-            --radius: 16px;
-            --shadow: 0 6px 18px rgba(0,0,0,.06);
-        }
-
-        *, *::before, *::after {
-            box-sizing: border-box
-        }
-
-        html, body {
-            height: 100%
-        }
-
         body {
-            margin: 0;
-            background: var(--bg);
-            color: var(--ink);
-            font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif;
-            line-height: 1.35;
-            -webkit-font-smoothing: antialiased
+            font-family: 'Inter', sans-serif;
+        }
+        /* Styles for smooth modal transitions */
+        #shareModalOverlay {
+            transition: opacity 0.3s ease-in-out;
         }
 
-        .container {
-            max-width: 540px;
-            margin: 0 auto;
-            padding: max(16px, env(safe-area-inset-top)) 16px max(24px, env(safe-area-inset-bottom));
+        #shareModalPanel {
+            transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
         }
 
-        header {
-            text-align: center;
-            margin-bottom: 16px
-        }
-
-        h1 {
-            margin: 0 0 8px;
-            font-size: clamp(20px, 5vw, 26px)
-        }
-
-        .sub {
-            margin: 0;
-            color: var(--muted);
-            font-size: clamp(14px, 3.5vw, 16px)
-        }
-
-        .card {
-            background: #fafafa;
-            border-radius: 20px;
-            padding: clamp(16px,5vw,24px);
-            box-shadow: var(--shadow)
-        }
-
-        .stack {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: clamp(14px,4vw,20px)
-        }
-
-        .qr-shell {
-            width: min(80vw, 300px);
-            aspect-ratio: 1;
-            border-radius: 16px;
-            background: #fff;
-            padding: clamp(10px,2.5vw,14px);
-            box-shadow: var(--shadow)
-        }
-
-            .qr-shell canvas {
-                width: 100% !important;
-                height: 100% !important;
-                display: block
-            }
-
-        .actions {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-top: 6px
-        }
-
-        .btn {
-            display: block;
-            width: 100%;
-            appearance: none;
-            border: 0;
-            border-radius: 12px;
-            padding: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            text-decoration: none;
-            text-align: center;
-            transition: background .15s ease
-        }
-
-        .btn--primary {
-            background: var(--brand);
-            color: #fff
-        }
-
-            .btn--primary:active {
-                background: #004bcc
-            }
-
-        .btn--ghost {
-            background: #fff;
-            color: var(--ink);
-            box-shadow: var(--shadow)
-        }
-
-        .links {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin: 12px auto 0;
-            width: 100%
-        }
-
-        .chip {
-            display: block;
-            text-align: center;
-            padding: 12px;
-            border-radius: 12px;
-            background: #fff;
-            box-shadow: var(--shadow);
-            color: var(--brand);
-            text-decoration: none
-        }
-
-            .btn:focus-visible, .chip:focus-visible {
-                outline: 3px solid #99c4ff;
-                outline-offset: 3px
-            }
-        
-
+        #shareModalOverlay.hidden #shareModalPanel {
+            transform: scale(0.95);
+            opacity: 0;
         }
     </style>
 </head>
-<body>
+<body class="bg-gradient-to-br from-gray-900 to-blue-900 text-white flex items-center justify-center min-h-screen p-4">
     
+    <!-- Main Card Container -->
+    <div class="w-full max-w-sm mx-auto bg-gray-800/50 backdrop-blur-xl border border-gray-700 rounded-3xl shadow-2xl p-6 md:p-8 text-center">
 
-    <div class="container">
-        <div class="card" role="main">
-            <header>
-                <h1>Vegas Open Network (VONet)</h1>
-                <p class="sub">Share with others, scan the QR Code.</p>
-            </header>
+        <!-- Header Section with Profile Image -->
+        <header class="mb-6">
+            <!-- Profile Picture/Logo Placeholder -->
+            <img src="https://placehold.co/128x128/1D4ED8/FFFFFF?text=VONet"
+                 alt="VONet Logo"
+                 class="w-24 h-24 rounded-full mx-auto mb-4 border-2 border-blue-500 shadow-lg">
+            <h1 class="text-2xl font-bold text-white">Vegas Open Network</h1>
+            <p class="text-gray-400 mt-1">Info Card</p>
+        </header>
 
-            <div class="stack">
-                <div class="qr-shell"><div id="qrcode" aria-label="QR for this page"></div></div>
+        <!-- Links Section -->
+        <div class="space-y-4 mb-6">
+            <a href="VONet Nonprofit Business Plan.pdf" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center w-full bg-blue-600 text-white font-semibold py-3 px-4 rounded-xl shadow-lg hover:bg-blue-700 hover:scale-105 transform transition-all duration-300">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                Information PDF
+            </a>
+            <a href="https://vonet.org/" target="_blank" rel="noopener noreferrer" class="flex items-center w-full bg-gray-700/80 text-gray-200 font-medium py-3 px-4 rounded-xl hover:bg-gray-600 transition-colors duration-300">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-3"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.72"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.72-1.72"></path></svg>
+                VONet Website
+            </a>
+            <a href="https://wiki.vonet.org" target="_blank" rel="noopener noreferrer" class="flex items-center w-full bg-gray-700/80 text-gray-200 font-medium py-3 px-4 rounded-xl hover:bg-gray-600 transition-colors duration-300">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-3"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+                VONet Wiki
+            </a>
+            <a href="mailto:support@vonet.org" class="flex items-center w-full bg-gray-700/80 text-gray-200 font-medium py-3 px-4 rounded-xl hover:bg-gray-600 transition-colors duration-300">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-3"><rect width="20" height="16" x="2" y="4" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg>
+                Contact Support
+            </a>
+        </div>
 
-                <div class="actions">
-                    <a id="openDoc" class="btn btn--primary" href="VONet Nonprofit Business Plan.pdf" target="_blank" rel="noopener">Open Information PDF</a>
-                </div>
+        <!-- Action Buttons -->
+        <div class="border-t border-gray-700 pt-6 flex gap-4">
+            <button id="saveContactButton" class="flex items-center justify-center w-full bg-green-600 text-white font-semibold py-3 px-4 rounded-xl shadow-lg hover:bg-green-700 hover:scale-105 transform transition-all duration-300">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M19 8v6"></path><path d="M22 11h-6"></path></svg>
+                Save Contact
+            </button>
+            <button id="openShareModalButton" class="flex items-center justify-center w-full bg-gray-600 text-white font-semibold py-3 px-4 rounded-xl shadow-lg hover:bg-gray-500 hover:scale-105 transform transition-all duration-300">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg>
+                Share
+            </button>
+        </div>
+    </div>
 
-                <nav class="links">
-                    <a class="chip" href="https://vonet.org/" target="_blank" rel="noopener">VONet Website</a>
-                    <a class="chip" href="https://wiki.vonet.org/" target="_blank" rel="noopener">VONet Wiki</a>
-                    <a class="chip" href="mailto:support@vonet.org">support@vonet.org</a>
-                </nav>
-            </div>
+    <!-- Share Modal -->
+    <div id="shareModalOverlay" class="fixed inset-0 bg-black/70 flex items-center justify-center p-4 hidden opacity-0">
+        <div id="shareModalPanel" class="bg-gray-800/80 backdrop-blur-xl border border-gray-600 rounded-3xl shadow-2xl w-full max-w-xs p-6 text-center transform scale-95 opacity-0">
+            <h2 class="text-xl font-bold text-white mb-2">Share this Card</h2>
+            <p class="text-gray-400 mb-4">Scan the code or copy the link.</p>
+
+            <div id="qrCodeDisplay" class="flex justify-center bg-white p-3 rounded-xl mb-4"></div>
+
+            <button id="copyLinkButton" class="w-full bg-blue-600 text-white font-semibold py-2.5 px-4 rounded-xl hover:bg-blue-700 transition-colors">Copy Link</button>
+
+            <button id="closeShareModalButton" class="mt-6 text-gray-400 hover:text-white font-medium">Close</button>
         </div>
     </div>
 
     <script>
-        const shell = document.querySelector('.qr-shell');
-        const qrEl = document.getElementById('qrcode');
-        const pageURL = location.href.replace(/#.*$/, '');
-        function drawQR(){
-          const size = Math.floor(shell.clientWidth);
-          qrEl.innerHTML = '';
-          new QRCode(qrEl, { text: pageURL, width: size, height: size, correctLevel: QRCode.CorrectLevel.M });
-        }
-        addEventListener('load', drawQR, { once: true });
-        addEventListener('resize', ()=> { clearTimeout(window.__qrt); window.__qrt=setTimeout(drawQR, 120); });
+                // --- DOM Element References ---
+                const openShareModalButton = document.getElementById('openShareModalButton');
+                const closeShareModalButton = document.getElementById('closeShareModalButton');
+                const shareModalOverlay = document.getElementById('shareModalOverlay');
+                const shareModalPanel = document.getElementById('shareModalPanel');
+                const qrCodeDisplayElement = document.getElementById('qrCodeDisplay');
+                const copyLinkButton = document.getElementById('copyLinkButton');
+                const saveContactButton = document.getElementById('saveContactButton');
 
-        
-       
+                // --- State ---
+                let qrCodeObject = null;
+
+                // --- Functions ---
+
+                /**
+                 * Opens the share modal with a smooth animation.
+                 */
+                function handleOpenShareModal() {
+                    shareModalOverlay.classList.remove('hidden');
+                    // Use a timeout to allow the display property to apply before starting the transition
+                    setTimeout(() => {
+                        shareModalOverlay.classList.remove('opacity-0');
+                        shareModalPanel.classList.remove('scale-95', 'opacity-0');
+                    }, 10);
+
+                    if (!qrCodeObject) {
+                        qrCodeObject = new QRCode(qrCodeDisplayElement, {
+                            text: window.location.href,
+                            width: 192,
+                            height: 192,
+                            colorDark: "#000000",
+                            colorLight: "#ffffff",
+                            correctLevel: QRCode.CorrectLevel.H
+                        });
+                    }
+                }
+
+                /**
+                 * Closes the share modal with a smooth animation.
+                 */
+                function handleCloseShareModal() {
+                    shareModalOverlay.classList.add('opacity-0');
+                    shareModalPanel.classList.add('scale-95', 'opacity-0');
+                    setTimeout(() => {
+                        shareModalOverlay.classList.add('hidden');
+                    }, 300); // Match the duration of the CSS transition
+                }
+
+                /**
+                 * Copies the current page URL to the clipboard and provides user feedback.
+                 */
+                function handleCopyLink() {
+                    const linkToCopy = window.location.href;
+                    navigator.clipboard.writeText(linkToCopy).then(() => {
+                        copyLinkButton.textContent = 'Copied!';
+                        setTimeout(() => {
+                            copyLinkButton.textContent = 'Copy Link';
+                        }, 2000);
+                    }).catch(err => {
+                        console.error('Clipboard API failed: ', err);
+                        // Fallback for older browsers or insecure contexts
+                        try {
+                            const textarea = document.createElement('textarea');
+                            textarea.value = linkToCopy;
+                            textarea.style.position = 'fixed';
+                            document.body.appendChild(textarea);
+                            textarea.focus();
+                            textarea.select();
+                            document.execCommand('copy');
+                            document.body.removeChild(textarea);
+                            copyLinkButton.textContent = 'Copied!';
+                            setTimeout(() => {
+                                copyLinkButton.textContent = 'Copy Link';
+                            }, 2000);
+                        } catch (fallbackErr) {
+                            console.error('Fallback copy failed: ', fallbackErr);
+                            copyLinkButton.textContent = 'Failed to Copy';
+                            setTimeout(() => {
+                                copyLinkButton.textContent = 'Copy Link';
+                            }, 2000);
+                        }
+                    });
+                }
+
+                /**
+                 * Generates and triggers the download of a VCF (Virtual Contact File).
+                 */
+                function handleSaveContact() {
+                    // Define contact information
+                    const contact = {
+                        name: 'Vegas Open Network',
+                        org: 'VONet',
+                        email: 'support@vonet.org',
+                        url: window.location.href // Use the current page URL
+                    };
+
+                    // Create VCF content string
+                    const vcfContent = `BEGIN:VCARD
+        VERSION:3.0
+        FN:${contact.name}
+        ORG:${contact.org}
+        EMAIL:${contact.email}
+        URL:${contact.url}
+        END:VCARD`;
+
+                    // Create a Blob from the VCF content
+                    const blob = new Blob([vcfContent], { type: 'text/vcard;charset=utf-8' });
+
+                    // Create a temporary link to trigger the download
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(blob);
+                    link.download = 'VONet.vcf';
+
+                    // Append to body, click, and remove
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+
+                    // Provide user feedback
+                    saveContactButton.innerHTML = `
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M20 6 9 17l-5-5"></path></svg>
+                        Saved!`;
+                    setTimeout(() => {
+                        saveContactButton.innerHTML = `
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M19 8v6"></path><path d="M22 11h-6"></path></svg>
+                        Save Contact`;
+                    }, 2500);
+                }
+
+                // --- Event Listeners ---
+                openShareModalButton.addEventListener('click', handleOpenShareModal);
+                closeShareModalButton.addEventListener('click', handleCloseShareModal);
+                shareModalOverlay.addEventListener('click', (event) => {
+                    if (event.target === shareModalOverlay) {
+                        handleCloseShareModal();
+                    }
+                });
+                copyLinkButton.addEventListener('click', handleCopyLink);
+                saveContactButton.addEventListener('click', handleSaveContact);
+
     </script>
-
 
     @RenderBody()
     @await RenderSectionAsync("Scripts", required: false)
